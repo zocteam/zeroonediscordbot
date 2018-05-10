@@ -39,17 +39,13 @@ Bot.on('ready', () => {
 
 Bot.on('message', (message) => {
     console.log(Data);
-    if(message.channel.id == '' )
-    if(message.content=='!ping'){
-        message.channel.send('Pong');
-    }
-
+   
     if(message.content == '!Blockcount' || message.content == '!blockcount' || message.content == '!block' || message.content == '!Block' || message.content == '!blocks' ){
        
         var BlockdataPromise = requestData(0,"https://explorer.01coin.io/api/getblockcount");
          BlockdataPromise.then(function(result) {
             
-         message.channel.send('The Current Block Count Is : ' + Data[0]);
+         message.channel.send('The current block count is : ' + Data[0]);
        });    
     }
       
@@ -61,7 +57,7 @@ Bot.on('message', (message) => {
 
      Promise.all([BTCdataPromise,ZOCdataPromise]).then(function(result) {
              
-            message.channel.send('The Current Balance For BTC Is  : ' + (Data[1]/100000000) + ' BTC \n' + 'The Current Balance For ZOC Is : ' + Data[2] + ' ZOC' );
+            message.channel.send('The current balance for BTC is  : ' + (Data[1]/100000000) + ' BTC. \n' + 'The current balance for ZOC is : ' + Data[2] + ' ZOC.' );
       });    
      
     }
@@ -70,7 +66,7 @@ Bot.on('message', (message) => {
         var BlockdataPromise = requestData(3,"https://explorer.01coin.io/api/getnetworkhashps");
         BlockdataPromise.then(function(result) {
             
-           message.channel.send('The Current HashRate Is : ' + (Data[3]/1000000) + " MHs");
+           message.channel.send('The current hashrate is : ' + (Data[3]/1000000) + " MHs");
       });    
     }
   
@@ -79,7 +75,7 @@ Bot.on('message', (message) => {
         var MarketdataPromise = requestData(4,"https://graviex.net/api/v2/tickers/zocbtc.json");
         MarketdataPromise.then(function(result) {
             var market = JSON.parse(Data[4]);
-           message.channel.send('The Last Trading Price Is : ' + market.ticker.last + ' BTC ');
+           message.channel.send('The last trading price is : ' + market.ticker.last + ' BTC ');
        });    
     }
 
