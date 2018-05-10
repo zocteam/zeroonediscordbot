@@ -1,0 +1,8 @@
+{
+  "name": "01Coin Discord Bot",
+  "version": "0.0.0.1",
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "request": "^2.85.0"
+  }
+}
