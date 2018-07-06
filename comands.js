@@ -1,0 +1,149 @@
+var request = require("request");
+var Data = ['', '', '', '',''];
+var walletAPI = require('./walletAPI.js');
+const database = require('./database.js');
+
+//Simple Http Request
+function requestData(id, url) {
+    // Setting URL and headers for request
+    var options = {
+        url: url,
+        headers: {
+            'User-Agent': 'request',
+            'rejectUnauthorized': 'false'
+        }
+    };
+    // Return new promise 
+    return new Promise(function (resolve, reject) {
+        // Do async job
+        request.get(options, function (err, resp, body) {
+            if (err) {
+                reject(err);
+            } else {
+                Data[id] = body;
+                resolve(body);
+            }
+        })
+
+    })
+}
+
+//Loads the database
+function Setup(){
+  //  database.Load();
+}
+
+//Gets the block count
+function GetBlockCount(message){
+    var BlockdataPromise = requestData(0, "https://explorer.01coin.io/api/getblockcount");
+        BlockdataPromise.then(function (result) {
+            message.channel.send('**```fix\nThe current block count is: ' + Data[0]+ '```**');
+        });
+}
+
+//Get the balance of the accounts from the sites apis
+function GetFund(message){
+    //setups the requests
+    var BTCdataPromise = requestData(1, "https://blockexplorer.com/api/addr/33aoJAthELcSGsYZJXxV8PAHVYiDECPuJR/balance");
+    var ZOCdataPromise = requestData(2, "https://explorer.01coin.io/ext/getbalance/5AchYc7iQS7ynce7hNZ6Ya8djsbm5N9JBS");
+    var ETHdataPromise = requestData(5, "http://api.ethplorer.io/getAddressInfo/0x1189d2c383A6533196b1A63e6FFcA69Edefce9ee?apiKey=freekey");
+
+    //process the requests
+    Promise.all([BTCdataPromise, ZOCdataPromise,ETHdataPromise]).then(function (result) {
+        //passes the json data to be usable
+        Data[5] = JSON.parse(Data[5]);
+        ///sends the message then the request is done
+        message.channel.send('**```fix\nThe current donation wallet balances are: \n' + Number((Data[1] / 100000000)).toFixed(8) + ' BTC (donate to 33aoJAthELcSGsYZJXxV8PAHVYiDECPuJR)\n' + Number(Data[2]).toFixed(8) + ' ZOC (donate to 5AchYc7iQS7ynce7hNZ6Ya8djsbm5N9JBS)\n' + Number(Data[5].ETH.balance).toFixed(8) +' ETH (donate to 0x1189d2c383A6533196b1A63e6FFcA69Edefce9ee) ```**');
+    });
+}
+
+function GetHashrate(message){
+    var BlockdataPromise = requestData(3, "https://explorer.01coin.io/api/getnetworkhashps");
+    BlockdataPromise.then(function (result) {
+        message.channel.send('**```fix\nThe current hashrate is: ' + Number((Data[3] / 1000000)).toFixed(2) + " MH/s```**");
+    });
+}
+
+function GetPrice(message){ 
+var MarketdataPromise = requestData(4, "https://graviex.net/api/v2/tickers/zocbtc.json");
+    MarketdataPromise.then(function (result) {
+        var market = JSON.parse(Data[4]);
+            message.channel.send('**```fix\nLast trade: ' + Number(market.ticker.last).toFixed(8) + ' BTC \nCurrent buy: ' + Number(market.ticker.buy).toFixed(8) + ' BTC \nCurrent sell: ' + Number(market.ticker.sell).toFixed(8) + ' BTC \n24h change: ' + Number(market.ticker.change * 100).toFixed(2) + '%```**');
+            
+    });
+}
+
+function GetMasternodesCount(message){
+    var MasternodePromise = walletAPI.GetMasternodeCount();
+    MasternodePromise.then(function (result) {
+
+        var roi = 1000 / (7488 / result);         
+        message.channel.send('**```fix\nThe current masternode count is: ' + result + '\nThe estimated ROI of a ZOC masternode is: ' + Number(roi).toFixed(0) + ' days```**');
+    });
+}
+
+function GetRewards(message){
+    var MasternodePromise = walletAPI.GetMasternodeCount();
+    MasternodePromise.then(function (result) {
+        //amount of masternodes times block time / mins in day 
+        var amountperday = ((result * 2.5) / 60)/24; 
+        
+        message.channel.send('**```fix\nThe average masternode rewards are:\n' + Number((amountperday * 13)).toFixed(2) + ' ZOC per day\n' + Number(((amountperday * 13)* 7)).toFixed(2) + ' ZOC per week\n' + Number(((amountperday * 13)* 28)).toFixed(2) + ' ZOC per month\n' + Number(((amountperday * 13)* 365)).toFixed(2) + ' ZOC per year```**');
+
+    });
+}
+//WIP
+function GetInvite(message){  
+//check if user has one if not then gen one
+    var link = database.CheckIfUserHasLink(message.author);
+
+       if(link == null){
+           //var genlink = GenInvite(message);
+           message.channel.createInvite({maxAge: 0, unique: true}).then(invite => {
+            database.AddDiscordInviteLink(message.author,invite.code);
+           message.channel.send(`${message.author} Invite Link : ${invite.code}`);
+           console.log(invite.code);
+           database.Save();
+        });
+           
+           
+       }else{
+            message.channel.send(`${message.author} Invite Link : ${link}`);
+       }
+   // message.channel.createInvite({maxAge: 0, unique: true}).then(invite => {
+  
+//message.channel.send('Here you go : ' + invite.code)
+   
+}
+
+function CalcMining(message,args){
+    var BlockdataPromise = requestData(6, "https://explorer.01coin.io/api/getdifficulty");
+    BlockdataPromise.then(function (result) {
+        //message.channel.send('The current hashrate is : ' + (Data[6] / 1000000) + " MHs");
+        var Hashrate = args[1] * 1000000;
+        var Difficulty  = Data[6];
+        var RewardperBlock = 13;
+        var numberOfDays = 1;
+        var SecondsPerDay = 86400;
+        var reward = ((numberOfDays*Hashrate*RewardperBlock*SecondsPerDay)/(Difficulty*2**32));
+        console.log(reward);
+        if(args[1] == null){
+        message.channel.send('**```fix\nFollow the !mine instruction with a number in MH/s to get average mining rewards per day: e.g., !mine 2.5```**');
+        }else{
+            //'```The average mining rewards per day with ''+ Hashrate +'' MH/s is '+ Number(reward).toFixed(8) + ' ZOC```'
+        message.channel.send('**```fix\nThe average mining rewards per day with ' + args[1] + ' MH/s is ' + Number(reward).toFixed(8) + ' ZOC```**');
+        //
+    }
+    });
+   
+}
+//exports  Functions to be used in main file
+module.exports.Setup = Setup;
+module.exports.GetBlockCount = GetBlockCount;
+module.exports.GetFund = GetFund;
+module.exports.GetHashrate = GetHashrate;
+module.exports.GetPrice = GetPrice;
+module.exports.GetMasternodesCount = GetMasternodesCount;
+module.exports.GetRewards = GetRewards;
+module.exports.GetInvite = GetInvite;
+module.exports.CalcMining = CalcMining;
