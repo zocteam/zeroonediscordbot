@@ -31,8 +31,10 @@ function GetMasternodeCount() {
             } else {
 
                 var keys = Object.keys(res.result);
+                console.log(res.result[keys[0]].status);
                 for (var i = 0; i < keys.length; i++) {
-                    if(res.result[keys[i]] == "ENABLED"){
+                    
+                    if(res.result[keys[i]].status == "ENABLED"){
                         enabled++;
                     }   
                 }

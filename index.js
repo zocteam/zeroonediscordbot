@@ -14,6 +14,12 @@ Bot.on('ready', () => {
     walletAPI.Setup();
     Comands.Setup();
     console.log('Ready!');
+    Bot.user.setPresence({
+        game: {
+            name: '!help',
+            type: 2
+        }
+    });
 });
 
 Bot.on('guildMemberAdd', member => {

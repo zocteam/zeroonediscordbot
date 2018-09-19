@@ -68,7 +68,12 @@ function GetPrice(message){
 var MarketdataPromise = requestData(4, "https://graviex.net/api/v2/tickers/zocbtc.json");
     MarketdataPromise.then(function (result) {
         var market = JSON.parse(Data[4]);
-            message.channel.send('**```fix\nLast trade: ' + Number(market.ticker.last).toFixed(8) + ' BTC \nCurrent buy: ' + Number(market.ticker.buy).toFixed(8) + ' BTC \nCurrent sell: ' + Number(market.ticker.sell).toFixed(8) + ' BTC \n24h change: ' + Number(market.ticker.change * 100).toFixed(2) + '%```**');
+        var append = '';
+        var price = Number(market.ticker.change * 100).toFixed(2);
+        // Append "+" if is positive
+        if(price >= 0)
+        append = "+";
+        message.channel.send('**```fix\nLast trade: ' + Number(market.ticker.last).toFixed(8) + ' BTC \nCurrent buy: ' + Number(market.ticker.buy).toFixed(8) + ' BTC \nCurrent sell: ' + Number(market.ticker.sell).toFixed(8) + ' BTC \n24h change: ' + append + price + '%```**');
             
     });
 }
@@ -86,7 +91,7 @@ function GetRewards(message){
     var MasternodePromise = walletAPI.GetMasternodeCount();
     MasternodePromise.then(function (result) {
         //amount of masternodes times block time / mins in day 
-        var amountperday = ((result * 2.5) / 60)/24; 
+        var amountperday = (60/2.5*24)/result; 
         
         message.channel.send('**```fix\nThe average masternode rewards are:\n' + Number((amountperday * 13)).toFixed(2) + ' ZOC per day\n' + Number(((amountperday * 13)* 7)).toFixed(2) + ' ZOC per week\n' + Number(((amountperday * 13)* 28)).toFixed(2) + ' ZOC per month\n' + Number(((amountperday * 13)* 365)).toFixed(2) + ' ZOC per year```**');
 
