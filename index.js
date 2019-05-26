@@ -8,15 +8,15 @@ var walletAPI = require('./walletAPI.js');
 //Discord API
 const Discord = require('discord.js');
 const Bot = new Discord.Client();
-const Comands = require('./comands.js');
+const Commands = require('./commands.js');
 
 Bot.on('ready', () => {
     walletAPI.Setup();
-    Comands.Setup();
+    Commands.Setup();
     console.log('Ready!');
     Bot.user.setPresence({
         game: {
-            name: '!help',
+            name: prefix + 'help',
             type: 2
         }
     });
@@ -29,56 +29,73 @@ Bot.on('guildMemberAdd', member => {
 const prefix = "!";
 Bot.on('message', (message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
-   // console.log('Args' + args);
-    if (message.content == '!Blockcount' || message.content == '!blockcount' || message.content == '!block' || message.content == '!Block' || message.content == '!blocks') {
-        Comands.GetBlockCount(message);
+    const command = args[0]
+    // console.log('Args: ' + args);
+    if (command === 'Blockcount' || command === 'blockcount' || command === 'block' || command === 'Block' || command === 'blocks') {
+        Commands.GetBlockCount(message);
     }
 
-    if (message.content == '!fund' || message.content == '!donations' || message.content == '!fundraiser') {
-       Comands.GetFund(message);
+    if (command === 'fund' || command === 'donations' || command === 'fundraiser') {
+       Commands.GetFund(message);
     }
 
-    if (message.content == '!hash' || message.content == '!hashrate') {
-        Comands.GetHashrate(message);
+    if (command === 'hash' || command === 'hashrate') {
+        Commands.GetHashrate(message);
     }
 
-    if (message.content == '!market' || message.content == '!price') {
-       Comands.GetPrice(message);
+    if (command === 'market' || command === 'price') {
+       Commands.GetPrice(message);
     }
-    
+
     //masternodes
-    if (message.content == '!masternodes') {
-         Comands.GetMasternodesCount(message);
+    if (command === 'masternodes') {
+         Commands.GetMasternodesCount(message);
     }
 
-    if(message.content == '!rewards'){
-        Comands.GetRewards(message);
+    if(command === 'rewards'){
+        Commands.GetRewards(message);
     }
 
-   if(message.content.startsWith(prefix + 'mine')){
-       Comands.CalcMining(message,args);
-   }
-    if (message.content == '!guide') {
+    if(command === 'mine'){
+        Commands.CalcMining(message, args);
+    }
+
+    if(command === 'value'){
+        Commands.CalcValue(message, args);
+    }
+
+    if (command === 'guide') {
         message.channel.send('**```fix\nYou can find the current guide to setup masternodes on linux here. https://github.com/zocteam/zeroonecoin/blob/master/doc/01coin_masternode_setup_guide.pdf```**');
     }
 
-    if (message.content == '!help') {
-        message.author.send("Hi, I'm the 01coin bot, and I'm happy to help! I respond to the following commands...\n**```fix\n!blockcount - Shows the current block height\n!donations - Shows the current balance in the donation wallets\n!price - Shows the current ZOC price on exchange\n!hashrate - Shows the current mining hashrate of the network\n!mine N - Shows the estimated mining proceeds for N MH/s\n!masternodes - Shows the current masternode count and estimated ROI\n!rewards - Shows the estimated masternode rewards\n!guide - Provides a link to the masternode setup guide```**");
+    if (command === 'help') {
+        message.author.send("Hi, I'm the 01coin bot, and I'm happy to help! I respond to the following commands...\n**```fix\n" +
+                            prefix + "blockcount - Shows the current block height\n" +
+                            prefix + "donations - Shows the current balance in the donation wallets\n" +
+                            prefix + "price - Shows the current ZOC price on exchange\n" +
+                            prefix + "hashrate - Shows the current mining hashrate of the network\n" +
+                            prefix + "mine N - Shows the estimated mining proceeds for N MH/s\n" +
+                            prefix + "value N - Shows the market value for N ZOC\n" +
+                            prefix + "masternodes - Shows the current masternode count and estimated ROI\n" +
+                            prefix + "rewards - Shows the estimated masternode rewards\n" +
+                            prefix + "guide - Provides a link to the masternode setup guide```**" +
+                            "\n"
+                          );
     }
 
-    if (message.content == '!takeoverworld') {
+    if (command === 'takeoverworld') {
         //message.channel.send('World Dommiaton Is Mine! :P');
         message.channel.sendFile("https://i.imgur.com/Ljc8jRm.jpg");
     }
 
-    const BannedLinks = ["discord.gg"];  
+    const BannedLinks = ["discord.gg"];
    //ZeroOneCoin is the test server bot role name
     if (BannedLinks.some(BannedLinks => message.content.includes(BannedLinks) && !message.member.roles.find("name", "ZeroOneCoin") && !message.member.roles.find("name", "01Coin")&& !message.member.roles.find("name", "zocteam")&& !message.member.roles.find("name", "pool admin") && !message.member.roles.find("name", "shared mn provider"))) {
         let role = message.guild.roles.find("name", "read-only");
         message.member.addRole(role);
         //warn User
         message.author.send('**```fix\nPlease be aware there is a ZERO TOLERANCE policy for link spamming on the 01coin Community Discord server. Your spam links will be\nimmediately deleted, so please take your spam elsewhere.```**');
-        
+
         message.delete();
     }
 });
