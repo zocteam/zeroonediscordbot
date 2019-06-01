@@ -32,7 +32,7 @@ Bot.on('message', (message) => {
 
     const command = args[0]
     // console.log('Args: ' + args);
-    if (command === 'fund' || command === 'donations' || command === 'fundraiser') {
+    if (command === 'block' || command === 'blocks') {
         Commands.GetBlockCount(message);
     }
 
