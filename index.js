@@ -23,15 +23,16 @@ Bot.on('ready', () => {
 });
 
 Bot.on('guildMemberAdd', member => {
-    member.send("Hello, and welcome to the 01coin Community! We are happy to have you!\n\nTo help you get started with 01coin, please proceed directly to the <#439415791826501642> channel.\n\nYou'll find all of the lastest news in the <#426349998675066891> channel. Once you're up to speed, please swing by any of the channels in the 01chat category. We have a large and dedicated team of moderators available to answer any questions you may have, not to mention a knowledgeable and helpful community - which now includes you!\n\n:link:  ** Useful Links:**\nLatest wallets: <https://github.com/zocteam/zeroonecoin/releases>\nBlock explorer: <https://explorer.01coin.io/>\nBitcointalk ANN: <https://bitcointalk.org/index.php?topic=3457534>\nLive dev roadmap: <https://trello.com/b/oTHwfsge/zero-one-coin-a-team>\n\n:twisted_rightwards_arrows:  **Exchanges:**\nGraviex: <https://graviex.net/markets/zocbtc>\nBisq: <https://bisq.network/>\nCryptalDash: *Coming soon!*\n\n:selfie:  **Social Media:**\nTwitter: <https://twitter.com/01CoinTeam>\nTelegram: <https://t.me/ZOCCoinOfficial>\nFacebook: <https://www.facebook.com/01CoinTeam>\nYouTube: <https://www.youtube.com/channel/UCWpXI8H8JnJiiaalFM8e3FQ>\n\nWe hope you enjoy being a part of the 01coin Community, and remember, with 01coin...\n\n***The future is in your hands***");
+    member.send("Hello, and welcome to the 01coin Community! We are happy to have you!\n\nTo help you get started with 01coin, please proceed directly to the <#439415791826501642> channel.\n\nYou'll find all of the lastest news in the <#426349998675066891> channel. Once you're up to speed, please swing by any of the channels in the 01chat category. We have a large and dedicated team of moderators available to answer any questions you may have, not to mention a knowledgeable and helpful community - which now includes you!\n\n🔗 **Useful Links:**\nLatest wallets: <https://github.com/zocteam/zeroonecoin/releases>\nBlock explorer: <https://explorer.01coin.io/>\nBitcointalk ANN: <https://bitcointalk.org/index.php?topic=3457534>\nLive dev roadmap: <https://trello.com/b/oTHwfsge/zero-one-coin-a-team>\n\n🔀 **Exchanges:**\nCrex24: <https://crex24.com/exchange/ZOC-BTC>\nGraviex: <https://graviex.net/markets/zocbtc>\nCryptalDash: <https://www.cryptaldash.com/go>\nBisq: <https://bisq.network/>\nUbit: <https://ubit.pw/markets/zocbtc>\n\n🤳 **Social Media:**\nTwitter: <https://twitter.com/01CoinTeam>\nTelegram: <https://t.me/ZOCCoinOfficial>\nReddit: <https://www.reddit.com/r/01coin/>\nFacebook: <https://www.facebook.com/01CoinTeam>\nYouTube: <https://www.youtube.com/channel/UCWpXI8H8JnJiiaalFM8e3FQ>\n\nWe hope you enjoy being a part of the 01coin Community, and remember, with 01coin...\n\n***The future is in your hands***");
 });
 
 const prefix = "!";
 Bot.on('message', (message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
+
     const command = args[0]
     // console.log('Args: ' + args);
-    if (command === 'Blockcount' || command === 'blockcount' || command === 'block' || command === 'Block' || command === 'blocks') {
+    if (command === 'fund' || command === 'donations' || command === 'fundraiser') {
         Commands.GetBlockCount(message);
     }
 
@@ -39,7 +40,7 @@ Bot.on('message', (message) => {
        Commands.GetFund(message);
     }
 
-    if (command === 'hash' || command === 'hashrate') {
+    if (command === 'hash' || command === 'hashrate' ) {
         Commands.GetHashrate(message);
     }
 
@@ -48,11 +49,11 @@ Bot.on('message', (message) => {
     }
 
     //masternodes
-    if (command === 'masternodes') {
+    if (command === 'masternodes' || command === 'masternode' || command === 'mn') {
          Commands.GetMasternodesCount(message);
     }
 
-    if(command === 'rewards'){
+    if(command === 'rewards' || command === 'reward'){
         Commands.GetRewards(message);
     }
 
@@ -65,7 +66,7 @@ Bot.on('message', (message) => {
     }
 
     if (command === 'guide') {
-        message.channel.send('**```fix\nYou can find the current guide to setup masternodes on linux here. https://github.com/zocteam/zeroonecoin/blob/master/doc/01coin_masternode_setup_guide.pdf```**');
+        message.channel.send('**```fix\nYou can find the current guide to setup masternodes on linux here: https://github.com/zocteam/zeroonecoin/blob/master/doc/01KT-MasternodeGuide.pdf```**');
     }
 
     if (command === 'help') {
@@ -90,12 +91,14 @@ Bot.on('message', (message) => {
 
     const BannedLinks = ["discord.gg"];
    //ZeroOneCoin is the test server bot role name
+
     if (BannedLinks.some(BannedLinks => message.content.includes(BannedLinks) && !message.member.roles.find("name", "ZeroOneCoin") && !message.member.roles.find("name", "01Coin")&& !message.member.roles.find("name", "zocteam")&& !message.member.roles.find("name", "pool admin") && !message.member.roles.find("name", "shared mn provider"))) {
         let role = message.guild.roles.find("name", "read-only");
         message.member.addRole(role);
+        
         //warn User
-        message.author.send('**```fix\nPlease be aware there is a ZERO TOLERANCE policy for link spamming on the 01coin Community Discord server. Your spam links will be\nimmediately deleted, so please take your spam elsewhere.```**');
-
+        message.author.send('**```fix\nPlease be aware there is a ZERO TOLERANCE policy for link spamming on the 01coin Community Discord server. Your spam links will be immediately deleted, so please take your spam elsewhere.```**');
+        
         message.delete();
     }
 });
