@@ -76,7 +76,15 @@ function GetPrice (message) {
           var crexOrderbook = JSON.parse(Data[9])
           var graviexMarket = JSON.parse(Data[4]), crexMarket = JSON.parse(Data[7]), cryptalMarket = JSON.parse(Data[8]);
           var graviexPrice = Number(graviexMarket.ticker.change * 100).toFixed(2), crexPrice = Number(crexMarket[0].price).toFixed(8), cryptalPrice = Number(cryptalMarket.price_ticker.last_price).toFixed(8);
-          message.channel.send('**```fix\nGraviex:                              Crex24:                              CryptalDash:\nLast trade: ' + Number(graviexMarket.ticker.last).toFixed(8) + ' BTC            Last Trade: ' + Number(crexPrice).toFixed(8) + ' BTC           Last Trade: ' + cryptalPrice + ' BTC\nCurrent buy: ' + Number(graviexMarket.ticker.buy).toFixed(8) + ' BTC           Current buy: ' + crexOrderbook.buyLevels[0].price.toFixed(8) + ' BTC          Current buy: ' + cryptalMarket.price_ticker.ask.toFixed(8) + ' BTC\nCurrent sell: ' + Number(graviexMarket.ticker.sell).toFixed(8) + ' BTC          Current sell: ' + crexOrderbook.sellLevels[0].price.toFixed(8) + ' BTC         Current sell: ' + cryptalMarket.price_ticker.bid.toFixed(8) + ' BTC\n24h change: ' + ((graviexPrice >= 0) ? '+' : '') + graviexPrice + '%                                                        24h change: ' + cryptalMarket.price_ticker.percent_change24h.toFixed(2) + '%\nVolume: ' + Number(graviexMarket.ticker.volbtc).toFixed(4) + ' BTC                                                         Volume: ' + cryptalMarket.price_ticker.volume24h + ' BTC```**');
+          if(exchange === 'crex24' || exchange === 'crex'){
+              message.channel.send('**```fix\nCrex24:\nLast Trade: ' + Number(crexPrice).toFixed(8) + ' BTC\nCurrent buy: ' + crexOrderbook.buyLevels[0].price.toFixed(8) + ' BTC\nCurrent sell: ' + crexOrderbook.sellLevels[0].price.toFixed(8) + ' BTC\n```**');
+          }else if(exchange === 'graviex' || exchange === 'grav'){
+              message.channel.send('**```fix\nGraviex:\nLast trade: ' + Number(graviexMarket.ticker.last).toFixed(8) + ' BTC\nCurrent buy: ' + Number(graviexMarket.ticker.buy).toFixed(8) + ' BTC\nCurrent sell: ' + Number(graviexMarket.ticker.sell).toFixed(8) + ' BTC\n24h change: ' + ((graviexPrice >= 0) ? '+' : '') + graviexPrice + '%\nVolume: ' + Number(graviexMarket.ticker.volbtc).toFixed(4) + ' BTC```**');
+          }else if(exchange === 'cryptaldash' || exchange === 'cd'){
+              message.channel.send('**```fix\nCryptalDash:\nLast Trade: ' + cryptalPrice + ' BTC\nCurrent buy: ' + cryptalMarket.price_ticker.ask.toFixed(8) + ' BTC\nCurrent sell: ' + cryptalMarket.price_ticker.bid.toFixed(8) + ' BTC\n24h change: ' + cryptalMarket.price_ticker.percent_change24h.toFixed(2) + '%\nVolume: ' + cryptalMarket.price_ticker.volume24h + ' BTC```**');
+          }else{
+             message.channel.send('**```Suggested use: !price graviex, !price crex, !price cd```**');
+          }
         });
       });
     });
