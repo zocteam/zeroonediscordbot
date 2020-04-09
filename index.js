@@ -73,7 +73,7 @@ Bot.on('message', (message) => {
         message.author.send("Hi, I'm the 01coin bot, and I'm happy to help! I respond to the following commands...\n**```fix\n" +
                             prefix + "blockcount - Shows the current block height\n" +
                             prefix + "donations - Shows the current balance in the donation wallets\n" +
-                            prefix + "price - Shows the current ZOC price on exchange\n" +
+                            prefix + "price <exchange> - Shows the current ZOC price on the exchange\n" +
                             prefix + "hashrate - Shows the current mining hashrate of the network\n" +
                             prefix + "mine N - Shows the estimated mining proceeds for N MH/s\n" +
                             prefix + "value N - Shows the market value for N ZOC\n" +
