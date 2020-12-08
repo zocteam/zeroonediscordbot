@@ -89,10 +89,10 @@ Bot.on('message', (message) => {
         message.channel.sendFile("https://i.imgur.com/Ljc8jRm.jpg");
     }
 
-    const BannedLinks = ["discord.gg"];
+    const BannedLinks = ["discord.gg"]; //add uniswap scam prevention
    //ZeroOneCoin is the test server bot role name
 
-    if (BannedLinks.some(BannedLinks => message.content.includes(BannedLinks) && !message.member.roles.find("name", "ZeroOneCoin") && !message.member.roles.find("name", "01Coin")&& !message.member.roles.find("name", "zocteam")&& !message.member.roles.find("name", "pool admin") && !message.member.roles.find("name", "shared mn provider"))) {
+    if (BannedLinks.some(BannedLinks => message.content.includes(BannedLinks) && !message.member.roles.find("name", "ZeroOneCoin") && !message.member.roles.find("name", "Bot") && !message.member.roles.find("name", "zocteam") && !message.member.roles.find("name", "mining pools") && !message.member.roles.find("name", "service providers" && !message.member.roles.find("name", "chain-of-trust"))) {
         let role = message.guild.roles.find("name", "read-only");
         message.member.addRole(role);
         
